@@ -3,7 +3,7 @@ import { TaskArguments } from "hardhat/types";
 import type { Staking } from "../types/contracts/Staking.ts";
 import type { Staking__factory } from "../types/factories/Staking__factory";
 
-task("deploy:CharityCampaigns").setAction(async function (
+task("deploy:Staking").setAction(async function (
   taskArguments: TaskArguments,
   { ethers }
 ) {
