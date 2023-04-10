@@ -7,15 +7,15 @@ task("deploy:Staking").setAction(async function (
   taskArguments: TaskArguments,
   { ethers }
 ) {
-  const CharityCampaignsFactory: Staking__factory = <
+  const StakingFactory: Staking__factory = <
     Staking__factory
-  >await ethers.getContractFactory("CharityCampaigns");
+  >await ethers.getContractFactory("Staking");
 
-  const CharityCampaigns: Staking = <Staking>(
-    await CharityCampaignsFactory.deploy()
+  const Staking: Staking = <Staking>(
+    await StakingFactory.deploy()
   );
 
-  await CharityCampaigns.deployed();
+  await Staking.deployed();
 
-  console.log("Contract deployes to: ", CharityCampaigns.address);
+  console.log("Contract deployes to: ", Staking.address);
 });

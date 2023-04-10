@@ -86,7 +86,6 @@ contract Staking is Token, ReentrancyGuard, Pausable  {
         require(_amount > 0, "Amount to be unstaked must be a pozitive number!");
 
         require(_amount <= users[msg.sender].stakedAmount, "You don't have enough staked amount to unstake!");
-		require(block.timestamp >= users[msg.sender].lastRewardUpdate + 1 days, "Cannot unstake before 1 day");
         // compute the reward to be up to date and reset the last reward update
         // time before removing part of the stake to avoid giving the user a
         // smaller reward at a later time
@@ -119,7 +118,6 @@ contract Staking is Token, ReentrancyGuard, Pausable  {
 
     function withdrawReward() public {
         require(users[msg.sender].stakedAmount > 0, "You must stake before withdrawing the reward!");
-		require(users[msg.sender].lastRewardUpdate >= block.timestamp + 1 days, "You can't withdraw your reward");
 
         // compute the reward to be up to date
         uint256 reward = users[msg.sender].rewardAmount + computeReward(msg.sender);
