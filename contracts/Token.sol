@@ -17,6 +17,7 @@ contract Token is ERC20Capped, AccessControl {
 		string memory symbol, 
 		uint256 initialSupply, 
 		uint256 cap) ERC20(name, symbol) ERC20Capped(cap * (10 ** 18)) {
+			_setupRole(MINT_ROLE, msg.sender);
 			if (initialSupply <= cap) {
             	ERC20._mint(_msgSender(), initialSupply * (10**18));
 			}
