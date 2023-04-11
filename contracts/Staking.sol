@@ -118,7 +118,6 @@ contract Staking is Token, ReentrancyGuard, Pausable  {
 
     function withdrawReward() public {
         require(users[msg.sender].stakedAmount > 0, "You must stake before withdrawing the reward!");
-
         // compute the reward to be up to date
         uint256 reward = users[msg.sender].rewardAmount + computeReward(msg.sender);
 

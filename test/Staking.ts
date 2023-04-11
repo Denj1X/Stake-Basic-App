@@ -254,28 +254,31 @@ describe("Staking", () => {
     );
   });
 
-  it("allows a user to withdraw their reward", async () => {
-	const transferTX = await staking.transfer(user1.address, BigNumber.from("100000"));
-	await transferTX.wait();
-  
-	// add reward
-	const addRewardTx = await staking.addReward(BigNumber.from("10000"));
-	await addRewardTx.wait();
-  
-	let initialBalance = await staking.balanceOf(user1.address);
-  
-	const stakeTx = await staking.connect(user1).stake(BigNumber.from("10000"));
-	await stakeTx.wait();
-  
-	// compute the reward to update lastRewardUpdate
-	const reward = await staking.computeReward(user1.address);
-	await ethers.provider.send("evm_increaseTime", [86400]); // add 1 day
-	const withdrawTx = await staking.connect(user1).withdrawReward();
-	await withdrawTx.wait();
-  
-	let finalBalance = await staking.balanceOf(user1.address);
-  
-	expect(finalBalance).to.eq(initialBalance.add(reward));
+  it("The withdraw reward was a success", async () => {
+    const transferTX = await staking.transfer(
+      user1.address,
+      BigNumber.from("100000")
+    );
+    await transferTX.wait();
+
+    // add reward
+    const addRewardTx = await staking.addReward(BigNumber.from("10000"));
+    await addRewardTx.wait();
+
+    let initialBalance = await staking.balanceOf(user1.address);
+
+    const stakeTx = await staking.connect(user1).stake(BigNumber.from("10000"));
+    await stakeTx.wait();
+
+    // add 5 seconds to have time to gather reward
+    await ethers.provider.send("evm_increaseTime", [5]);
+
+    const withdrawTx = await staking.connect(user1).withdrawReward();
+    await withdrawTx.wait();
+
+    let finalBalance = await staking.balanceOf(user1.address);
+
+    expect(finalBalance).to.eq(initialBalance.sub(BigNumber.from("9995")));
   });
 
   // computeReward
@@ -341,6 +344,12 @@ describe("Staking", () => {
     expect(await staking.totalStakedAmount()).to.be.gt(BigNumber.from("10000"));
     expect(finalUserData.stakedAmount).to.be.gt(BigNumber.from("10000"));
     expect(finalUserData.rewardAmount).to.eq(BigNumber.from("0"));
+  });
+
+  it("Only the owner can add reward to the contract", async () => {
+    await expect(
+      staking.connect(user1).addReward(BigNumber.from("10000"))
+    ).to.be.revertedWith("You can't add a reward");
   });
 
   it("The reward amount to be added should be positive", async () => {
