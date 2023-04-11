@@ -24,10 +24,16 @@ Hi! My name is Matei-Alexandru Biciusca, and I created a basic staking app, with
 I used this [`template`](https://github.com/paulrberg/hardhat-template/generate) in order to work with Solidity contracts, with Typescript tests and deploying, using Hardhat in the same time.
 
 # App Features
-This is a basic staking app, which has these features:
+This is a basic staking app, for staking tokens and earning rewards. Users can stake their tokens and earn rewards based on the reward rate set by the admin. The contracts are written in Solidity and use the OpenZeppelin library for security and access control.
+
+The app has the following features:
+
 - [X] ERC20 Contract - A basic ERC20 contract, with a maximum cap and a mint function from ERC20. It has AccessControl, because only a certain minter (the owner), can actually supply with tokens. The ```Token.sol``` contract includes what I mentioned earlier.
 
-- [X] Stake -   
+- [X] Staking Contract -  The contract ```Staking.sol``` which includes the actual app features.
+	[X] Roles: This contract inherited the AccessControl from ```Token.sol```, so we can use this feature to have an admin role
+	[X] Setting the reward: Basically, only the admin can add a reward for the staking app
+	[X] Staking: Users can stake their tokens by calling the stake function and providing the amount to be staked.
 ## Usage
 
 ### Pre Requisites
