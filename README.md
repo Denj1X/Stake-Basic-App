@@ -31,9 +31,9 @@ The app has the following features:
 - [X] ERC20 Contract - A basic ERC20 contract, with a maximum cap and a mint function from ERC20. It has AccessControl, because only a certain minter (the owner), can actually supply with tokens. The ```Token.sol``` contract includes what I mentioned earlier.
 
 - [X] Staking Contract -  The contract ```Staking.sol``` which includes the actual app features.
-	[X] Roles: This contract inherited the AccessControl from ```Token.sol```, so we can use this feature to have an admin role
-	[X] Setting the reward: Basically, only the admin can add a reward for the staking app
-	[X] Staking: Users can stake their tokens by calling the stake function and providing the amount to be staked.
+	- [X] Roles: This contract inherited the AccessControl from ```Token.sol```, so we can use this feature to have an admin role
+	- [X] Setting the reward: Basically, only the admin can add a reward for the staking app
+	- [X] Staking: Users can stake their tokens by calling the stake function and providing the amount to be staked.
 ## Usage
 
 ### Pre Requisites
