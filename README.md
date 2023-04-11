@@ -42,13 +42,15 @@ The app has the following features:
 	- [X] Tracking: The contract maintains a `mapping` of each user and their `stakedAmount`, `rewardAmount`, and `lastRewardUpdate`. The `totalStakedAmount`, `totalLoanedAmount`, `rewardRate`, and `totalRewardAmount` are also tracked.
 	- [X] Rewarding: The reward is computed based on the amount staked, the rewardRate, and the time since the last reward update. When a user unstakes their tokens, the reward is added to their balance if they have staked before, and if they have no stake and reward, the reward is sent directly to them.
 	- [ ] Time conditioning: The contract has a cooldown period of 1 day for unstaking, withdrawing or reinvesting rewards to prevent abuse.
-## Usage
+	- [ ] Staking or reinvesting with multiple tokens: Users can interact and use all functions with different tokens, eg: staking with a token, then unstaking or withdraw their reward with another token.
+
+## Tests
+When I made the tests I couldn't make tests to work with time conditioning part, because when I use this type of `require` in `Staking.sol`, eg: `require(block.timestamp >= users[msg.sender].lastRewardUpdate + 1 days, "Message for false case")`. That's the main reason why I gave up on time conditioning.
+Also, there might be missing some tests, regarding `Token.sol` or `AccessControl` contract from `OpenZeppelin`
 
 ### Pre Requisites
 
-Before being able to run any command, you need to create a `.env` file and set a BIP-39 compatible mnemonic as an
-environment variable. You can follow the example in `.env.example`. If you don't already have a mnemonic, you can use
-this [website](https://iancoleman.io/bip39/) to generate one.
+Using the template or using Hardhat standard environment from [hardhat]: https://hardhat.org/
 
 Then, proceed with installing dependencies:
 
@@ -80,57 +82,6 @@ Run the tests with Hardhat:
 $ pnpm test
 ```
 
-### Lint Solidity
-
-Lint the Solidity code:
-
-```sh
-$ pnpm lint:sol
-```
-
-### Lint TypeScript
-
-Lint the TypeScript code:
-
-```sh
-$ pnpm lint:ts
-```
-
-### Coverage
-
-Generate the code coverage report:
-
-```sh
-$ pnpm coverage
-```
-
-### Report Gas
-
-See the gas usage per unit test and average gas per method call:
-
-```sh
-$ REPORT_GAS=true pnpm test
-```
-
-### Clean
-
-Delete the smart contract artifacts, the coverage reports and the Hardhat cache:
-
-```sh
-$ pnpm clean
-```
-
-### Deploy
-
-Deploy the contracts to Hardhat Network:
-
-```sh
-$ pnpm deploy --greeting "Bonjour, le monde!"
-```
-
-## Tips
-
-### Syntax Highlighting
 
 If you use VSCode, you can get Solidity syntax highlighting with the
 [hardhat-solidity](https://marketplace.visualstudio.com/items?itemName=NomicFoundation.hardhat-solidity) extension.
