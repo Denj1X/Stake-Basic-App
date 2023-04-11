@@ -25,7 +25,7 @@ I used this [`template`](https://github.com/paulrberg/hardhat-template/generate)
 
 # App Features
 This is a basic staking app, which has these features:
-- [X] ERC20 Contract - A basic ERC20 contract, with a maximum cap and a mint function from ERC20. It has AccessControl, because only a certain minter (the owner), can actually supply with tokens. The ```sh $ Token.sol``` contract includes what I mentioned earlier.
+- [X] ERC20 Contract - A basic ERC20 contract, with a maximum cap and a mint function from ERC20. It has AccessControl, because only a certain minter (the owner), can actually supply with tokens. The ```Token.sol``` contract includes what I mentioned earlier.
 
 - [X] Stake -   
 ## Usage
