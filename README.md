@@ -28,12 +28,20 @@ This is a basic staking app, for staking tokens and earning rewards. Users can s
 
 The app has the following features:
 
-- [X] ERC20 Contract - A basic ERC20 contract, with a maximum cap and a mint function from ERC20. It has AccessControl, because only a certain minter (the owner), can actually supply with tokens. The ```Token.sol``` contract includes what I mentioned earlier.
+- [X] ERC20 Contract - A basic ERC20 contract, with a maximum cap and a mint function from ERC20. It has AccessControl, because only a certain minter (the owner), can actually supply with tokens. The ```Token.sol``` contract includes what I mentioned earlier. ERC20Capped inherited most of the functions and methods from ERC20, so we won't have a problem whether including ERC20 or not in the main contract.
 
 - [X] Staking Contract -  The contract ```Staking.sol``` which includes the actual app features.
-	- [X] Roles: This contract inherited the AccessControl from ```Token.sol```, so we can use this feature to have an admin role
-	- [X] Setting the reward: Basically, only the admin can add a reward for the staking app
-	- [X] Staking: Users can stake their tokens by calling the stake function and providing the amount to be staked.
+	- [X] Roles: The contract has an access control mechanism using the ```AccessControl``` contract from `OpenZeppelin`, where the admin role is defined as `ADMIN_ROLE`.
+	- [X] Small security measures: The contract uses the `ReentrancyGuard` and `Pausable` contracts from `OpenZeppelin` for additional security measures.
+	- [X] Setting the reward: The contract has a reward rate set by the admin and the admin can add more reward tokens to the contract by calling the `addReward` function.
+	- [X] User features: Users can stake, unstake, withdraw their reward, and reinvest their reward.
+		- [X] Staking: Users can stake their tokens by calling the stake function and providing the amount to be staked.
+		- [X] Unstaking: Users can unstake their tokens by calling the `unstake` function and providing the amount to be unstaked.
+		- [X] Withdrawing: Users can withdraw their earned rewards by calling the `withdrawReward` function.
+		- [X] Reinvesting: Users can reinvest their earned rewars by calling the `reinvestReward` function. This functionality is similar to a restake.
+	- [X] Tracking: The contract maintains a `mapping` of each user and their `stakedAmount`, `rewardAmount`, and `lastRewardUpdate`. The `totalStakedAmount`, `totalLoanedAmount`, `rewardRate`, and `totalRewardAmount` are also tracked.
+	- [X] Rewarding: The reward is computed based on the amount staked, the rewardRate, and the time since the last reward update. When a user unstakes their tokens, the reward is added to their balance if they have staked before, and if they have no stake and reward, the reward is sent directly to them.
+	- [ ] Time conditioning: The contract has a cooldown period of 1 day for unstaking, withdrawing or reinvesting rewards to prevent abuse.
 ## Usage
 
 ### Pre Requisites
