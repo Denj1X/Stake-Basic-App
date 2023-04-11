@@ -48,6 +48,8 @@ The app has the following features:
 When I made the tests I couldn't make tests to work with time conditioning part, because when I use this type of `require` in `Staking.sol`, eg: `require(block.timestamp >= users[msg.sender].lastRewardUpdate + 1 days, "Message for false case")`. That's the main reason why I gave up on time conditioning.
 Also, there might be missing some tests, regarding `Token.sol` or `AccessControl` contract from `OpenZeppelin`
 
+Total tests: 20
+
 ### Pre Requisites
 
 Using the template or using Hardhat standard environment from [hardhat]: https://hardhat.org/
