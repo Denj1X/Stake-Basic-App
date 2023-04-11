@@ -1,7 +1,7 @@
 import { task } from "hardhat/config";
 import { TaskArguments } from "hardhat/types";
-import type { Staking } from "../types/contracts/Staking.ts";
-import type { Staking__factory } from "../types/factories/Staking__factory";
+import { Staking } from "../typechain-types/contracts/Staking";
+import { Staking__factory } from "../typechain-types/factories/contracts/Staking__factory";
 
 task("deploy:Staking").setAction(async function (
   taskArguments: TaskArguments,
