@@ -10,7 +10,7 @@ import "./Token.sol";
 Using ReentrancyGuard and Pausable contracts from OpenZeppelin for
 safe measures
 */
-contract Staking is Token, ReentrancyGuard, Pausable  {
+contract Staking is Token  {
 	bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 	struct user {
         uint256 stakedAmount;

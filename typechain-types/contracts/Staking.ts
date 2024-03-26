@@ -46,7 +46,6 @@ export interface StakingInterface extends utils.Interface {
     "increaseAllowance(address,uint256)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
-    "paused()": FunctionFragment;
     "reinvestReward()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
@@ -84,7 +83,6 @@ export interface StakingInterface extends utils.Interface {
       | "increaseAllowance"
       | "mint"
       | "name"
-      | "paused"
       | "reinvestReward"
       | "renounceRole"
       | "revokeRole"
@@ -159,7 +157,6 @@ export interface StakingInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "reinvestReward",
     values?: undefined
@@ -258,7 +255,6 @@ export interface StakingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "reinvestReward",
     data: BytesLike
@@ -306,24 +302,20 @@ export interface StakingInterface extends utils.Interface {
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "Mint(address,uint256)": EventFragment;
-    "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
-    "Unpaused(address)": EventFragment;
     "UpdatedTotalStakedAmount(uint256)": EventFragment;
     "UpdatedUserInfo(uint256,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Mint"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdatedTotalStakedAmount"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdatedUserInfo"): EventFragment;
 }
@@ -347,13 +339,6 @@ export interface MintEventObject {
 export type MintEvent = TypedEvent<[string, BigNumber], MintEventObject>;
 
 export type MintEventFilter = TypedEventFilter<MintEvent>;
-
-export interface PausedEventObject {
-  account: string;
-}
-export type PausedEvent = TypedEvent<[string], PausedEventObject>;
-
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -403,13 +388,6 @@ export type TransferEvent = TypedEvent<
 >;
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
-
-export interface UnpausedEventObject {
-  account: string;
-}
-export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
-
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
 export interface UpdatedTotalStakedAmountEventObject {
   totalStakedAmount: BigNumber;
@@ -534,8 +512,6 @@ export interface Staking extends BaseContract {
     ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
-
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
 
     reinvestReward(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -683,8 +659,6 @@ export interface Staking extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
-  paused(overrides?: CallOverrides): Promise<boolean>;
-
   reinvestReward(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -831,8 +805,6 @@ export interface Staking extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
-    paused(overrides?: CallOverrides): Promise<boolean>;
-
     reinvestReward(overrides?: CallOverrides): Promise<void>;
 
     renounceRole(
@@ -919,9 +891,6 @@ export interface Staking extends BaseContract {
     ): MintEventFilter;
     Mint(to?: PromiseOrValue<string> | null, amount?: null): MintEventFilter;
 
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
-
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
       previousAdminRole?: PromiseOrValue<BytesLike> | null,
@@ -965,9 +934,6 @@ export interface Staking extends BaseContract {
       to?: PromiseOrValue<string> | null,
       value?: null
     ): TransferEventFilter;
-
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
 
     "UpdatedTotalStakedAmount(uint256)"(
       totalStakedAmount?: null
@@ -1062,8 +1028,6 @@ export interface Staking extends BaseContract {
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
 
     reinvestReward(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1207,8 +1171,6 @@ export interface Staking extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     reinvestReward(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
