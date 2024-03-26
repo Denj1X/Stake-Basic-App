@@ -367,3 +367,45 @@ describe("Staking", () => {
     expect(await staking.totalRewardAmount()).to.eq(BigNumber.from("10000"));
   });
 });
+
+describe("Token", function () {
+	let Token: ReturnType<typeof ethers.ContractFactory>;
+	let token: ReturnType<typeof ethers.Contract>;
+	let owner: any;
+	let addr1: any;
+	let addr2: any;
+  
+	beforeEach(async function () {
+	  Token = await ethers.getContractFactory("Token");
+	  [owner, addr1, addr2] = await ethers.getSigners();
+	  token = await Token.deploy("MyToken", "MTK", 1000000, 10000000);
+	  await token.deployed();
+	});
+  
+	describe("Deployment", function () {
+	  it("Should assign the total supply of tokens to the owner", async function () {
+		const ownerBalance = await token.balanceOf(owner.address);
+		expect(await token.totalSupply()).to.equal(ownerBalance);
+	  });
+	});
+  
+	describe("Minting", function () {
+	  it("Should mint tokens correctly", async function () {
+		const initialSupply = await token.totalSupply();
+		await token.mint(addr1.address, 1000);
+		expect(await token.balanceOf(addr1.address)).to.equal(1000);
+		expect(await token.totalSupply()).to.equal(initialSupply.add(1000));
+	  });
+	});
+  
+	describe("Burning", function () {
+	  it("Should burn tokens correctly", async function () {
+		await token.mint(addr1.address, 1000);
+		const initialSupply = await token.totalSupply();
+		await token.burn(addr1.address, 500);
+		expect(await token.balanceOf(addr1.address)).to.equal(500);
+		expect(await token.totalSupply()).to.equal(initialSupply.sub(500));
+	  });
+	});
+  });
+  

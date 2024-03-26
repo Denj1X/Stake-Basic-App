@@ -30,12 +30,14 @@ import type {
 export interface StakingInterface extends utils.Interface {
   functions: {
     "ADMIN_ROLE()": FunctionFragment;
+    "BURN_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "MINT_ROLE()": FunctionFragment;
     "addReward(uint256)": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "burn(address,uint256)": FunctionFragment;
     "cap()": FunctionFragment;
     "computeReward(address)": FunctionFragment;
     "decimals()": FunctionFragment;
@@ -67,12 +69,14 @@ export interface StakingInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "ADMIN_ROLE"
+      | "BURN_ROLE"
       | "DEFAULT_ADMIN_ROLE"
       | "MINT_ROLE"
       | "addReward"
       | "allowance"
       | "approve"
       | "balanceOf"
+      | "burn"
       | "cap"
       | "computeReward"
       | "decimals"
@@ -105,6 +109,7 @@ export interface StakingInterface extends utils.Interface {
     functionFragment: "ADMIN_ROLE",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "BURN_ROLE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
@@ -125,6 +130,10 @@ export interface StakingInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burn",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "cap", values?: undefined): string;
   encodeFunctionData(
@@ -224,6 +233,7 @@ export interface StakingInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "BURN_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
@@ -233,6 +243,7 @@ export interface StakingInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "cap", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "computeReward",
@@ -301,6 +312,7 @@ export interface StakingInterface extends utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
+    "Burn(address,uint256)": EventFragment;
     "Mint(address,uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -311,6 +323,7 @@ export interface StakingInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Burn"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Mint"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
@@ -331,6 +344,14 @@ export type ApprovalEvent = TypedEvent<
 >;
 
 export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
+
+export interface BurnEventObject {
+  from: string;
+  amount: BigNumber;
+}
+export type BurnEvent = TypedEvent<[string, BigNumber], BurnEventObject>;
+
+export type BurnEventFilter = TypedEventFilter<BurnEvent>;
 
 export interface MintEventObject {
   to: string;
@@ -441,6 +462,8 @@ export interface Staking extends BaseContract {
   functions: {
     ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    BURN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     MINT_ROLE(overrides?: CallOverrides): Promise<[string]>;
@@ -466,6 +489,12 @@ export interface Staking extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    burn(
+      from: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     cap(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -587,6 +616,8 @@ export interface Staking extends BaseContract {
 
   ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  BURN_ROLE(overrides?: CallOverrides): Promise<string>;
+
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
   MINT_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -612,6 +643,12 @@ export interface Staking extends BaseContract {
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  burn(
+    from: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   cap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -733,6 +770,8 @@ export interface Staking extends BaseContract {
   callStatic: {
     ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
+    BURN_ROLE(overrides?: CallOverrides): Promise<string>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     MINT_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -758,6 +797,12 @@ export interface Staking extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    burn(
+      from: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     cap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -885,6 +930,12 @@ export interface Staking extends BaseContract {
       value?: null
     ): ApprovalEventFilter;
 
+    "Burn(address,uint256)"(
+      from?: PromiseOrValue<string> | null,
+      amount?: null
+    ): BurnEventFilter;
+    Burn(from?: PromiseOrValue<string> | null, amount?: null): BurnEventFilter;
+
     "Mint(address,uint256)"(
       to?: PromiseOrValue<string> | null,
       amount?: null
@@ -957,6 +1008,8 @@ export interface Staking extends BaseContract {
   estimateGas: {
     ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    BURN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     MINT_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -981,6 +1034,12 @@ export interface Staking extends BaseContract {
     balanceOf(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    burn(
+      from: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     cap(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1098,6 +1157,8 @@ export interface Staking extends BaseContract {
   populateTransaction: {
     ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    BURN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1124,6 +1185,12 @@ export interface Staking extends BaseContract {
     balanceOf(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    burn(
+      from: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     cap(overrides?: CallOverrides): Promise<PopulatedTransaction>;
