@@ -82,6 +82,8 @@
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.8.2"
+    "@alch/alchemy-web3": "^1.4.7",
+    "@openzeppelin/contracts": "^4.8.2",
+    "alchemy-sdk": "^3.2.0"
   }
 }

@@ -15,7 +15,7 @@ const getSepoliaConfig = () => {
       ? [`${process.env.PRIVATE_KEY}`]
       : ["0x0000000000000000000000000000000000000000"],
     chainId: chainIdSepolia,
-    url,
+    url
   };
 };
 

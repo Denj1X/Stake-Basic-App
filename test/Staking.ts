@@ -37,6 +37,7 @@ describe("Staking", () => {
   });
 
   it("You can't stake more coins than your balance", async () => {
+
     await expect(
       staking.connect(user1).stake(BigNumber.from("1000"))
     ).to.be.revertedWith("You don't have enough balance to stake!");
@@ -409,3 +410,4 @@ describe("Token", function () {
 	});
   });
   
+  export {};
