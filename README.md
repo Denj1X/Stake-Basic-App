@@ -21,7 +21,7 @@ A Hardhat-based template for developing Solidity smart contracts, with sensible 
 ## Getting Started
 
 Hi! My name is Matei-Alexandru Biciusca, and I created a basic staking app, with different functionalities.
-I used this [`template`](https://github.com/paulrberg/hardhat-template/generate) in order to work with Solidity contracts, with Typescript tests and deploying, using Hardhat in the same time.
+I used this [`template`](https://github.com/paulrberg/hardhat-template/generate) in order to work with Solidity contracts, with Typescript tests and deploying, and using Hardhat network in the same time.
 
 # App Features
 This is a basic staking app, for staking tokens and earning rewards. Users can stake their tokens and earn rewards based on the reward rate set by the admin. The contracts are written in Solidity and use the OpenZeppelin library for security and access control.
@@ -32,7 +32,7 @@ The app has the following features:
 
 - [X] Staking Contract -  The contract ```Staking.sol``` which includes the actual app features.
 	- [X] Roles: The contract has an access control mechanism using the ```AccessControl``` contract from `OpenZeppelin`, where the admin role is defined as `ADMIN_ROLE`.
-	- [X] Small security measures: The contract uses the `ReentrancyGuard` and `Pausable` contracts from `OpenZeppelin` for additional security measures.
+	- [ ] Small security measures: The contract uses the `ReentrancyGuard` and `Pausable` contracts from `OpenZeppelin` for additional security measures.
 	- [X] Setting the reward: The contract has a reward rate set by the admin and the admin can add more reward tokens to the contract by calling the `addReward` function.
 	- [X] User features: Users can stake, unstake, withdraw their reward, and reinvest their reward.
 		- [X] Staking: Users can stake their tokens by calling the stake function and providing the amount to be staked.
@@ -43,13 +43,7 @@ The app has the following features:
 	- [X] Rewarding: The reward is computed based on the amount staked, the rewardRate, and the time since the last reward update. When a user unstakes their tokens, the reward is added to their balance if they have staked before, and if they have no stake and reward, the reward is sent directly to them.
 	- [ ] Time conditioning: The contract has a cooldown period of 1 day for unstaking, withdrawing or reinvesting rewards to prevent abuse.
 	- [ ] Staking or reinvesting with multiple tokens: Users can interact and use all functions with different tokens, eg: staking with a token, then unstaking or withdraw their reward with another token.
-
-## Tests
-When I made the tests I couldn't make tests to work with time conditioning part, because when I use this type of `require` in `Staking.sol`, eg: `require(block.timestamp >= users[msg.sender].lastRewardUpdate + 1 days, "Message for false case")`. That's the main reason why I gave up on time conditioning.
-Also, there might be missing some tests, regarding `Token.sol` or `AccessControl` contract from `OpenZeppelin`
-
-Total tests: 20
-
+       
 ### Pre Requisites
 
 Using the template or using Hardhat standard environment from [hardhat]: https://hardhat.org/
@@ -83,6 +77,9 @@ Run the tests with Hardhat:
 ```sh
 $ pnpm test
 ```
+
+The tests are written in Typescript. Static analyzers might be used later on for different types of testing.
+More details about testing will appear on the Wiki page!
 
 
 If you use VSCode, you can get Solidity syntax highlighting with the
