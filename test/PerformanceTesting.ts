@@ -1,61 +1,50 @@
-/*const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
-const { expect } = require("chai");
-const { BigNumber } = require("ethers");
-const { ethers } = require("hardhat");
+import { ethers } from "hardhat";
+import { expect } from "chai";
 
-describe("Staking Performance Tests", function () {
-	let stakingOwner: any;
-  	let user1: any;
-  	let user2: any;
-  	let name = "Xcoin";
-  	let symbol = "XCN";
-  	let initialSupply = 1000000;
-  	let cap = 100000000000000;
-  	let rewardRate = 1;
-  	let staking: any;
-	let web3: any;
-   
-	beforeEach(async function () {
-	   	const Staking = await ethers.getContractFactory("Staking");
-	   	const [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
-	   	staking = await Staking.deploy("MyToken", "MTK", 1000000, 10000000, 100);
-	   	await staking.deployed();
-	   	stakingOwner = owner;
-    	user1 = addr1;
-    	user2 = addr2;
-	   	web3 = createAlchemyWeb3("https://eth-mainnet.alchemyapi.io/v2/GDoO0h9_MiuHAB6YwoHX4seJHhhzPPxAn");
-	});
-   
-	it("Should measure gas cost of staking", async function () {
-		const tx = await staking.connect(user1).stake(BigNumber.from("1000"))
-	   	const receipt = await tx.wait();
-	   	console.log(`Gas used for staking: ${receipt.gasUsed.toString()}`);
-	   	expect(receipt.gasUsed).to.be.lt(BigNumber.from("500000")); // Example threshold, adjust based on your expectations
-	});
-   
-	it("Should measure gas cost of unstaking", async function () {
-	   await staking.connect(user1).stake(BigNumber.from("1000"));
-	   const tx = await staking.connect(user1).unstake(BigNumber.from("500"));
-	   const receipt = await tx.wait();
-	   console.log(`Gas used for unstaking: ${receipt.gasUsed.toString()}`);
-	   expect(receipt.gasUsed).to.be.lt(BigNumber.from("300000")); // Example threshold, adjust based on your expectations
-	});
-   
-	it('should measure the performance of a function', async function () {
-		// Perform the function multiple times and measure the gas cost
-		const iterations = 10;
-		const gasCosts = [];
-	
-		for (let i = 0; i < iterations; i++) {
-			const tx = await staking.connect(user1).stake(BigNumber.from("5"));
-		  	const receipt = await web3.eth.getTransactionReceipt(tx.hash);
-		  	gasCosts.push(receipt.gasUsed);
-		}
-	
-		// Calculate the average gas cost
-		const totalGasCost = gasCosts.reduce((a, b) => a + b, 0);
-		const averageGasCost = totalGasCost / iterations;
-	
-		console.log(`Average gas cost: ${averageGasCost}`);
-	  });
-});*/
+describe("Staking Contract Performance Testing", function () {
+ let Staking: any;
+ let staking: any;
+ let owner: any;
+ let addr1: any;
+ let addr2: any;
+ let addrs: any;
+
+ beforeEach(async function () {
+    const StakingFactory = await ethers.getContractFactory("Staking");
+    [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
+    staking = await StakingFactory.deploy("TestToken", "TT", 1000000, 1000000, 100);
+    await staking.deployed();
+ });
+
+ // Existing tests...
+ it("Should allow adding rewards", async function () {
+    const tx = await staking.connect(owner).addReward(500);
+	const receipt = await tx.wait();
+	console.log(`Gas used for adding rewards: ${receipt.gasUsed.toString()}`);
+    expect(await staking.totalRewardAmount()).to.equal(500);
+ });
+
+ it("Should not allow non-admin to add rewards", async function () {
+    await expect(staking.connect(addr1).addReward(500)).to.be.revertedWith("You can't add a reward");
+ });
+
+ /*it("Should allow reinvesting rewards", async function () {
+    await staking.connect(addr1).stake(1000);
+    await staking.addReward(1000);
+    await staking.connect(addr1).reinvestReward();
+    expect(await staking.users(addr1.address)).to.have.property("stakedAmount", 2000);
+ });
+
+ it("Should not allow unstaking more than staked amount", async function () {
+    await staking.connect(addr1).stake(1000);
+    await expect(staking.connect(addr1).unstake(1500)).to.be.revertedWith("You don't have enough staked amount to unstake!");
+ });*/
+
+ it("Should not allow withdrawing reward without staking", async function () {
+    await expect(staking.connect(addr1).withdrawReward()).to.be.revertedWith("You must stake before withdrawing the reward!");
+ });
+
+ it("Should not allow reinvesting reward without staking", async function () {
+    await expect(staking.connect(addr1).reinvestReward()).to.be.revertedWith("You must stake before reinvesting the reward!");
+ });
+});
