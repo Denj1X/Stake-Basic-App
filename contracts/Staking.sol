@@ -43,7 +43,7 @@ contract Staking is Token  {
         rewardRate = _rewardRate;
     }
 
-    function addReward(uint256 _amount) public {
+    function addReward(uint256 _amount) external {
 		require(hasRole(ADMIN_ROLE, msg.sender), "You can't add a reward");
         require(_amount > 0, "Amount to be added must be a pozitive number!");
 
@@ -51,7 +51,47 @@ contract Staking is Token  {
         _burn(msg.sender, _amount);
     }
 
-    function stake(uint256 _amount) public {
+	function computeReward(address _user) public view returns (uint256) {
+        require(
+            users[_user].stakedAmount > 0,
+            "User must stake before computing the reward!"
+        );
+
+        return
+            ((block.timestamp - users[_user].lastRewardUpdate) *
+                users[_user].stakedAmount *
+                rewardRate) / totalStakedAmount;
+    }
+
+	function reinvestReward() external {
+        require(
+            users[msg.sender].stakedAmount > 0,
+            "You must stake before reinvesting the reward!"
+        );
+
+        // make sure the reward value is up to date
+        users[msg.sender].rewardAmount += computeReward(msg.sender);
+
+        require(users[msg.sender].rewardAmount <= totalRewardAmount, "The reward is not available!");
+
+        totalRewardAmount -= users[msg.sender].rewardAmount;
+
+        // increase the stake from the reward, reset the reward and the date
+        totalStakedAmount += users[msg.sender].rewardAmount;
+        users[msg.sender].stakedAmount += users[msg.sender].rewardAmount;
+        users[msg.sender].rewardAmount = 0;
+        users[msg.sender].lastRewardUpdate = block.timestamp;
+
+        emit UpdatedTotalStakedAmount(totalStakedAmount);
+
+        emit UpdatedUserInfo(
+            users[msg.sender].stakedAmount,
+            users[msg.sender].rewardAmount,
+            users[msg.sender].lastRewardUpdate
+        );
+    }
+
+    function stake(uint256 _amount) external {
         require(_amount > 0, "Amount to be staked must be a pozitive number!");
 
         require(
@@ -82,7 +122,7 @@ contract Staking is Token  {
         );
     }
 
-    function unstake(uint256 _amount) public {
+    function unstake(uint256 _amount) external {
         require(_amount > 0, "Amount to be unstaked must be a pozitive number!");
 
         require(_amount <= users[msg.sender].stakedAmount, "You don't have enough staked amount to unstake!");
@@ -116,7 +156,7 @@ contract Staking is Token  {
         );
     }
 
-    function withdrawReward() public {
+    function withdrawReward() external {
         require(users[msg.sender].stakedAmount > 0, "You must stake before withdrawing the reward!");
         // compute the reward to be up to date
         uint256 reward = users[msg.sender].rewardAmount + computeReward(msg.sender);
@@ -130,46 +170,6 @@ contract Staking is Token  {
         _mint(msg.sender, reward);
         // reset the reward count
         users[msg.sender].rewardAmount = 0;
-
-        emit UpdatedUserInfo(
-            users[msg.sender].stakedAmount,
-            users[msg.sender].rewardAmount,
-            users[msg.sender].lastRewardUpdate
-        );
-    }
-
-    function computeReward(address _user) public view returns (uint256) {
-        require(
-            users[_user].stakedAmount > 0,
-            "User must stake before computing the reward!"
-        );
-
-        return
-            ((block.timestamp - users[_user].lastRewardUpdate) *
-                users[_user].stakedAmount *
-                rewardRate) / totalStakedAmount;
-    }
-
-    function reinvestReward() public {
-        require(
-            users[msg.sender].stakedAmount > 0,
-            "You must stake before reinvesting the reward!"
-        );
-
-        // make sure the reward value is up to date
-        users[msg.sender].rewardAmount += computeReward(msg.sender);
-
-        require(users[msg.sender].rewardAmount <= totalRewardAmount, "The reward is not available!");
-
-        totalRewardAmount -= users[msg.sender].rewardAmount;
-
-        // increase the stake from the reward, reset the reward and the date
-        totalStakedAmount += users[msg.sender].rewardAmount;
-        users[msg.sender].stakedAmount += users[msg.sender].rewardAmount;
-        users[msg.sender].rewardAmount = 0;
-        users[msg.sender].lastRewardUpdate = block.timestamp;
-
-        emit UpdatedTotalStakedAmount(totalStakedAmount);
 
         emit UpdatedUserInfo(
             users[msg.sender].stakedAmount,
